@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat da Íon Code</title>
+    <style>
+        body {width: 900px; margin: 0 auto; margin-top: 2rem; background-color: #F6EDF8;  background-size: 100%; justify-content: center; align-items: center; font-family: 'Times New Roman', Times, serif;}
+        .send {width: 900px; margin: 0; padding: 0; margin-top: 1rem; color: #eee;}
+        input.text {width: 88.5%; margin: 0; padding: 0; padding: 5px; }
+        .btn {padding: 5px 0; width: 82px; background-color: #E15060; border-radius: 10px; margin: 0; border: 0px; color: #eee;        }
+        .btn:hover {background-color: #FBBB10}
+        ul {list-style-type: none;width: 100%;padding: 0;margin: 0; background-color: #F1C9CF; border-radius: 5px;}
+        li { padding: 5px 10px;}
+        li:nth-child(odd) {background-color: #F1AEB1; border-radius: 10px; }
+        .container {
+        width: 900px; 
+        height: 80vh; 
+        display: flex; 
+        flex-direction: column; 
+        box-shadow: 2px 2px 20px #f1c9cf; 
+        border-radius: 10px; 
+        }
+    </style>
+</head>
+<body>
+
+    <ul class="ul" id="mensagens"></ul>
+    <div class="enviar">
+        <input class="text" autofocus="" id="mensagem" autocomplete="off" placeholder="Envie uma mensagem"/>
+        <button class="btn" id="enviar_mensagem">Enviar</button>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        var socket = io()
+        var usuario = prompt("Digite seu nome")
+        var usuario = usuario[0].toUpperCase()+usuario.substring(1)
+        socket.emit('chat ion', "Bem vindo, " + usuario)
+
+        document.getElementById('mensagem').addEventListener('keypress', function(e) {
+        var key = e.which || e.keyCode;
+        if (key == 13) {
+            enviar_mensagem();
+        }
+    });
+
+        document.getElementById('enviar_mensagem').addEventListener("click", enviar_mensagem);
+        function enviar_mensagem() {
+            msg = document.getElementById('mensagem').value;
+            if (msg.length > 0){
+                console.log(msg)
+                socket.emit('chat ion', usuario + ": " + msg);
+                document.getElementById('mensagem').value = "";
+            }
+        }
+
+        socket.on('chat ion', function(msg){
+            let ul = document.getElementById('mensagens');
+            let li = document.createElement('li');
+            let br = document.createElement('br');
+            li.appendChild(document.createTextNode(msg));
+            ul.appendChild(li);
+        })
+
+    </script>
+
+</body>
+</html>
